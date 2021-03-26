@@ -77,7 +77,15 @@ class Menu:
     self.items.append(item)
     self.center()
 
-  def handle(self, mouse, deltaTime):
+  def show(self):
+    self.active = True
+
+  def hide(self):
+    self.active = False
+    self.safeForInteraction = False
+    self.timer = 0
+
+  def tick(self, mouse, deltaTime):
     if not self.active: return
     
     if not self.safeForInteraction:
@@ -90,13 +98,5 @@ class Menu:
       if self.safeForInteraction:
         item.handle(mouse, deltaTime)
       item.draw()
-
-  def show(self):
-    self.active = True
-
-  def hide(self):
-    self.active = False
-    self.safeForInteraction = False
-    self.timer = 0
 
   
