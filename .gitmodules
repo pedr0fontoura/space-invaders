@@ -1,0 +1,3 @@
+[submodule "vendor/pplay"]
+	path = vendor/pplay
+	url = https://github.com/adonisgasiglia/pplay.git
