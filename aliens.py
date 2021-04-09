@@ -123,6 +123,8 @@ class AlienFleet:
             if (len(self.aliens[i]) == 1):
               _rows.append(i)
 
+            self.game.score += len(self.aliens) - i
+
             shouldBreak = True
             break
 
@@ -143,6 +145,8 @@ class AlienFleet:
 
   def tick(self):
     if (not len(self.aliens)):
+      self.game.mainMenu.show()
+      self.game.stop()
       return
 
     deltaTime = self.game.window.delta_time()
@@ -176,6 +180,10 @@ class AlienFleet:
       self.dx = -self.dx
       self.x = 0 + 1
       self.descend()
+
+    if (self.y + self.height >= self.game.player.sprite.y):
+      self.game.setLife(self.game.life - 1)
+      self.game.reset()
 
     # Debug fleet x, y, width, height
     # self.game.window.draw_text('|', self.x, self.y, 20, (255, 0, 0))
