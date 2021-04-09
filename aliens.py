@@ -20,10 +20,10 @@ class AlienFleet:
     self.width = 0
     self.height = 0
 
-    self.x = 0
+    self.x = x
     self._x = self.x
 
-    self.y = 0
+    self.y = y
     self._y = self.y
 
     self.dx = 200
@@ -59,6 +59,8 @@ class AlienFleet:
       if (not i == rows - 1):
         self.height += self.alienHeight + int(self.alienHeight / 3)
         self.width = 0
+      else:
+        self.height += self.alienHeight
 
       self.aliens.append(tmpAliens)
 
@@ -68,10 +70,40 @@ class AlienFleet:
     self.dx = 0
     self.dy = AlienFleet.FLEET_VERTICAL_SPEED
 
+  def resize(self):
+    if (not self.aliens[0][0]):
+      return
+
+    startX = self.aliens[0][0].x
+    startY = self.aliens[0][0].y
+    endX = self.aliens[0][0].x + self.aliens[0][0].width
+    endY = self.aliens[0][0].y + self.aliens[0][0].height
+
+    for i in range(len(self.aliens)):
+        for j in range(len(self.aliens[i])):
+          if (self.aliens[i][j].x < startX):
+            startX = self.aliens[i][j].x
+
+          if (self.aliens[i][j].y < startY):
+            startY = self.aliens[i][j].y
+
+          if (self.aliens[i][j].x + self.aliens[i][j].width > endX):
+            endX = self.aliens[i][j].x + self.aliens[i][j].width
+
+          if (self.aliens[i][j].y + self.aliens[i][j].height > endY):
+            endY = self.aliens[i][j].y + self.aliens[i][j].height
+    
+    self.x = startX
+    self.y = startY
+    self.width = endX - startX
+    self.height = endY - startY
+
   def collision(self):
     _rows = []
     _aliens = []
     _shots = []
+
+    resize = False
 
     for k in range(len(self.game.player.shots)):
       for i in range(len(self.aliens)):
@@ -84,6 +116,8 @@ class AlienFleet:
             _aliens.append([i, j])
             _shots.append(k)
 
+            resize = True
+
             if (len(self.aliens[i]) == 1):
               _rows.append(i)
 
@@ -95,6 +129,9 @@ class AlienFleet:
 
     for _row in _rows:
       self.aliens.pop(_row)
+
+    if (resize):
+      self.resize()
 
     # Left boundary
     if (self.x + self.width >= self.game.window.width):
