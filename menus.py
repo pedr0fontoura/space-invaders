@@ -9,7 +9,7 @@ class MainMenu(Menu):
 
     def playAction():
       self.hide()
-      self.game.inGame = True
+      self.game.start()
 
     playButton = MenuItem('assets/menu/play.png', playAction)
 

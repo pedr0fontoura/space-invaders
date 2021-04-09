@@ -27,9 +27,10 @@ class Game:
     self.difficulty = 1
     self.inGame = False
 
+  def start(self):
     self.player = Player(self)
-
     self.aliens = AlienFleet(self, 0, 0, 3, 5)
+    self.inGame = True
 
   def tick(self):
     self.window.set_background_color((0, 0, 0))

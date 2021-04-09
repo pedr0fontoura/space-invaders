@@ -9,7 +9,7 @@ class AlienFleet:
 
   FLEET_DESCENT = 25
 
-  def __init__(self, game, x, y, lines, columns):
+  def __init__(self, game, x, y, rows, columns):
     self.game = game
 
     self.aliens = []
@@ -34,7 +34,7 @@ class AlienFleet:
     self.shouldDescend = False
     self.descentDistance = 0
 
-    for i in range(lines):
+    for i in range(rows):
       tmpAliens = []
 
       for j in range(columns):
@@ -56,7 +56,7 @@ class AlienFleet:
 
         tmpAliens.append(sprite)
       
-      if (not i == lines - 1):
+      if (not i == rows - 1):
         self.height += self.alienHeight + int(self.alienHeight / 3)
         self.width = 0
 
@@ -69,29 +69,32 @@ class AlienFleet:
     self.dy = AlienFleet.FLEET_VERTICAL_SPEED
 
   def collision(self):
-    lines = len(self.aliens)
-
+    _rows = []
     _aliens = []
     _shots = []
 
-    for i in range(lines):
-      columns = len(self.aliens[i])
+    for k in range(len(self.game.player.shots)):
+      for i in range(len(self.aliens)):
+        for j in range(len(self.aliens[i])):
+          alien = self.aliens[i][j]
 
-      for j in range(columns):
-        alien = self.aliens[i][j]
-
-        for k in range(len(self.game.player.shots)):
           shot = self.game.player.shots[k]
 
           if (alien.collided(shot)):
             _aliens.append([i, j])
             _shots.append(k)
 
+            if (len(self.aliens[i]) == 1):
+              _rows.append(i)
+
     for _alien in _aliens:
       self.aliens[_alien[0]].pop(_alien[1])
 
     for _shot in _shots:
       self.game.player.shots.pop(_shot)
+
+    for _row in _rows:
+      self.aliens.pop(_row)
 
     # Left boundary
     if (self.x + self.width >= self.game.window.width):
@@ -126,10 +129,8 @@ class AlienFleet:
     relativeX = self.x - self._x
     relativeY = self.y - self._y
 
-    lines = len(self.aliens)
-    for i in range(lines):
-      columns = len(self.aliens[i])
-      for j in range(columns):
+    for i in range(len(self.aliens)):
+      for j in range(len(self.aliens[i])):
         self.aliens[i][j].x = self.aliens[i][j].x + relativeX
         self.aliens[i][j].y = self.aliens[i][j].y + relativeY
         self.aliens[i][j].draw()
