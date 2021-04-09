@@ -96,27 +96,38 @@ class AlienFleet:
     self.height = endY - startY
 
   def hitDetection(self):
-    _rows = []
     _aliens = []
     _shots = []
+    _rows = []
 
     resize = False
 
+    # Detection
     for k in range(len(self.game.player.shots)):
       shot = self.game.player.shots[k]
 
-      for i in range(len(self.aliens)):
+      if (not ((shot.x >= self.x and shot.x <= self.x + self.width) and (shot.y <= self.y + self.height and shot.y >= self.y))):
+        break
+
+      for i in range(len(self.aliens) - 1, -1 , -1):
+        shouldBreak = False
+
         for j in range(len(self.aliens[i])):
           alien = self.aliens[i][j]
 
           if (alien.collided(shot)):
             _aliens.append([i, j])
             _shots.append(k)
-
             resize = True
 
             if (len(self.aliens[i]) == 1):
               _rows.append(i)
+
+            shouldBreak = True
+            break
+
+        if (shouldBreak):
+          break
 
     for _alien in _aliens:
       self.aliens[_alien[0]].pop(_alien[1])
