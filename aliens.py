@@ -21,10 +21,7 @@ class AlienFleet:
     self.height = 0
 
     self.x = x
-    self._x = self.x
-
     self.y = y
-    self._y = self.y
 
     self.dx = 200
     self._dx = self.dx
@@ -71,7 +68,7 @@ class AlienFleet:
     self.dy = AlienFleet.FLEET_VERTICAL_SPEED
 
   def resize(self):
-    if (not self.aliens[0][0]):
+    if (not len(self.aliens)):
       return
 
     startX = self.aliens[0][0].x
@@ -98,7 +95,7 @@ class AlienFleet:
     self.width = endX - startX
     self.height = endY - startY
 
-  def collision(self):
+  def hitDetection(self):
     _rows = []
     _aliens = []
     _shots = []
@@ -106,11 +103,11 @@ class AlienFleet:
     resize = False
 
     for k in range(len(self.game.player.shots)):
+      shot = self.game.player.shots[k]
+
       for i in range(len(self.aliens)):
         for j in range(len(self.aliens[i])):
           alien = self.aliens[i][j]
-
-          shot = self.game.player.shots[k]
 
           if (alien.collided(shot)):
             _aliens.append([i, j])
@@ -133,27 +130,23 @@ class AlienFleet:
     if (resize):
       self.resize()
 
-    # Left boundary
-    if (self.x + self.width >= self.game.window.width):
-      self.dx = -self.dx
-      self.x = self.game.window.width - self.width - 1
-      self.descend()
-
-    # Right boundary
-    if (self.x <= 0):
-      self.dx = -self.dx
-      self.x = 0 + 1
-      self.descend()
-    
   def tick(self):
-    deltaTime = self.game.window.delta_time()
+    if (not len(self.aliens)):
+      return
 
-    self._x = self.x
-    self._y = self.y
+    deltaTime = self.game.window.delta_time()
 
     self.x += self.dx * deltaTime
     self.y += self.dy * deltaTime
 
+    for i in range(len(self.aliens)):
+      for j in range(len(self.aliens[i])):
+        self.aliens[i][j].x = self.aliens[i][j].x + self.dx * deltaTime
+        self.aliens[i][j].y = self.aliens[i][j].y + self.dy * deltaTime
+        self.aliens[i][j].draw()
+
+    self.hitDetection()
+    
     if (self.shouldDescend):
       self.descentDistance += self.dy * deltaTime
 
@@ -163,14 +156,18 @@ class AlienFleet:
         self.dx = self._dx
         self.dy = 0
 
-    relativeX = self.x - self._x
-    relativeY = self.y - self._y
+    if (self.x + self.width >= self.game.window.width):
+      self.dx = -self.dx
+      self.x = self.game.window.width - self.width - 1
+      self.descend()
 
-    for i in range(len(self.aliens)):
-      for j in range(len(self.aliens[i])):
-        self.aliens[i][j].x = self.aliens[i][j].x + relativeX
-        self.aliens[i][j].y = self.aliens[i][j].y + relativeY
-        self.aliens[i][j].draw()
+    if (self.x <= 0):
+      self.dx = -self.dx
+      self.x = 0 + 1
+      self.descend()
 
-    self.collision()
-
+    # Debug fleet x, y, width, height
+    # self.game.window.draw_text('|', self.x, self.y, 20, (255, 0, 0))
+    # self.game.window.draw_text('|', self.x + self.width, self.y, 20, (255, 0, 0))
+    # self.game.window.draw_text('```', self.x, self.y, 20, (255, 0, 0))
+    # self.game.window.draw_text(',,,', self.x, self.y + self.height, 20, (255, 0, 0))
