@@ -5,7 +5,7 @@ class Player:
   SPRITE_PATH = 'assets/ship.png'
 
   SHOT_COOLDOWN = 0.5
-  SHOT_SPEED = 200
+  SHOT_SPEED = 400
 
   def __init__(self, game):
     self.game = game
