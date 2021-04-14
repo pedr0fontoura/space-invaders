@@ -171,14 +171,14 @@ class AlienFleet:
         self.dx = self._dx
         self.dy = 0
 
-    if (self.x + self.width >= self.game.window.width):
-      self.dx = -self.dx
-      self.x = self.game.window.width - self.width - 1
-      self.descend()
-
-    if (self.x <= 0):
+    elif (self.x <= 0):
       self.dx = -self.dx
       self.x = 0 + 1
+      self.descend()
+
+    elif (self.x + self.width >= self.game.window.width):
+      self.dx = -self.dx
+      self.x = self.game.window.width - self.width - 1
       self.descend()
 
     if (self.y + self.height >= self.game.player.sprite.y):
