@@ -14,6 +14,8 @@ class Game:
   LIFE_SPRITE_PATH = 'assets/life.png'
   LIFE_SPRITE_FRAMES = 4
 
+  PRIMARY_COLOR = (154, 217, 65)
+
   def __init__(self):
     self.window = Window(Game.WINDOW_WIDTH, Game.WINDOW_HEIGHT)
     self.window.set_title(Game.TITLE)
@@ -44,12 +46,15 @@ class Game:
     self.inGame = False
     
   def setLife(self, life):
-    if (life < 0 or life > 3):
+    if (life > 3):
       return
 
+    if (life < 0):
+      self.stop()
+
     self.life = life
-    self.lifeBar.set_curr_frame(Game.MAX_LIFE - life)
     self.lifeBar.update()
+    self.lifeBar.set_curr_frame(Game.MAX_LIFE - life)
 
   def start(self):
     self.life = Game.MAX_LIFE
@@ -60,6 +65,7 @@ class Game:
   
   def stop(self):
     self.inGame = False
+    self.mainMenu.show()
   
   def reset(self):
     self.player = Player(self)
@@ -76,10 +82,9 @@ class Game:
       self.aliens.tick()
 
       self.lifeBar.draw()
-      self.window.draw_text(str(self.score), 5, 5, 20, (154, 217, 65), "Arial", True)
-
+      self.window.draw_text(str(self.score), 5, 5, 20, Game.PRIMARY_COLOR, "Arial", True)
+      
       if (self.keyboard.key_pressed('ESC')):
-        self.inGame = False
-        self.mainMenu.show()
+        self.stop()
 
     self.window.update()
