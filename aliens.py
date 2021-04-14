@@ -186,7 +186,12 @@ class AlienFleet:
       self.game.reset()
 
     # Debug fleet x, y, width, height
-    # self.game.window.draw_text('|', self.x, self.y, 20, (255, 0, 0))
-    # self.game.window.draw_text('|', self.x + self.width, self.y, 20, (255, 0, 0))
-    # self.game.window.draw_text('```', self.x, self.y, 20, (255, 0, 0))
-    # self.game.window.draw_text(',,,', self.x, self.y + self.height, 20, (255, 0, 0))
+    if (self.game.DEBUG):
+      self.game.window.draw_text('|', self.x, self.y, 20, (255, 0, 0))
+      self.game.window.draw_text('```', self.x, self.y, 20, (255, 0, 0))
+      self.game.window.draw_text('|', self.x, self.y + self.height -20, 20, (255, 0, 0))
+      self.game.window.draw_text(',,,', self.x, self.y + self.height -20, 20, (255, 0, 0))
+      self.game.window.draw_text('|', self.x + self.width, self.y, 20, (255, 0, 0))
+      self.game.window.draw_text('```', self.x + self.width  - 20, self.y, 20, (255, 0, 0))
+      self.game.window.draw_text('|', self.x + self.width, self.y + self.height -20, 20, (255, 0, 0))
+      self.game.window.draw_text(',,,', self.x + self.width - 20, self.y + self.height -20, 20, (255, 0, 0))

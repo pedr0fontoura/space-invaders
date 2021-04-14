@@ -9,6 +9,7 @@ class Game:
   WINDOW_WIDTH = 1280
   WINDOW_HEIGHT = 720
   TITLE = 'Space Invaders v1.0.0-alpha'
+  DEBUG = False
 
   MAX_LIFE = 3
   LIFE_SPRITE_PATH = 'assets/life.png'
@@ -24,6 +25,11 @@ class Game:
     self.mouse = self.window.get_mouse()
 
     self.menuPool = []
+
+    if (Game.DEBUG):
+      self._frameRate = 0
+      self.frameRate = 0
+      self.timer = 0
 
     self.mainMenu = MainMenu(self)
     self.difficultyMenu = DifficultyMenu(self)
@@ -72,6 +78,15 @@ class Game:
     self.aliens = AlienFleet(self, 0, 64, 3, 5)
 
   def tick(self):
+    if (Game.DEBUG):
+      self._frameRate += 1
+      self.timer += self.window.delta_time()
+
+      if (self.timer >= 1):
+        self.frameRate = self._frameRate
+        self._frameRate = 0
+        self.timer = 0
+
     self.window.set_background_color((0, 0, 0))
 
     for menu in self.menuPool:
@@ -86,5 +101,8 @@ class Game:
       
       if (self.keyboard.key_pressed('ESC')):
         self.stop()
+
+    if (Game.DEBUG):
+      self.window.draw_text(str(self.frameRate), self.WINDOW_WIDTH - 50, self.WINDOW_HEIGHT - 32, 20, Game.PRIMARY_COLOR, "Arial", True)
 
     self.window.update()
