@@ -107,7 +107,7 @@ class AlienFleet:
       shot = self.game.player.shots[k]
 
       if (not ((shot.x >= self.x and shot.x <= self.x + self.width) and (shot.y <= self.y + self.height and shot.y >= self.y))):
-        break
+        continue
 
       for i in range(len(self.aliens) - 1, -1 , -1):
         shouldBreak = False
