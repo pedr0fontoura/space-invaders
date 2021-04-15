@@ -14,7 +14,7 @@ class Player:
     self.sprite.x = self.game.window.width / 2 - self.sprite.width / 2
     self.sprite.y = self.game.window.height - 10 - self.sprite.height
 
-    self.speed = 300 * self.game.difficulty
+    self.speed = 300 * (1.0 - self.game.difficulty / 10)
 
     self.shots = []
     self.lastShot = 0

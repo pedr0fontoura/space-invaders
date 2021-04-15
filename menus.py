@@ -38,17 +38,17 @@ class DifficultyMenu(Menu):
     super().__init__(self.game.window.width / 2, self.game.window.height / 2, False)
 
     def easyAction():
-      self.game.difficulty = 1
+      self.game.difficulty = 0
 
     easyButton = MenuItem('assets/menu/easy.png', easyAction)
 
     def mediumAction():
-      self.game.difficulty = 2
+      self.game.difficulty = 1
 
     mediumButton = MenuItem('assets/menu/medium.png', mediumAction)
 
     def hardAction():
-      self.game.difficulty = 3
+      self.game.difficulty = 2
 
     hardButton = MenuItem('assets/menu/hard.png', hardAction)
 

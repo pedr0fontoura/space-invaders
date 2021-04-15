@@ -23,7 +23,7 @@ class AlienFleet:
     self.x = x
     self.y = y
 
-    self.dx = 200
+    self.dx = AlienFleet.FLEET_HORIZONTAL_SPEED * (1.0 + self.game.difficulty / 10)
     self._dx = self.dx
 
     self.dy = 0
