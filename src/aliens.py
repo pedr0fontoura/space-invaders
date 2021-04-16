@@ -1,4 +1,5 @@
 from PPlay.sprite import *
+import random
 
 class AlienFleet:
 
@@ -8,6 +9,9 @@ class AlienFleet:
   FLEET_VERTICAL_SPEED = 200
 
   FLEET_DESCENT = 25
+
+  SHOT_SPEED = 400
+  SHOT_COOLDOWN = 1.0
 
   def __init__(self, game, x, y, rows, columns):
     self.game = game
@@ -30,6 +34,10 @@ class AlienFleet:
 
     self.shouldDescend = False
     self.descentDistance = 0
+
+    self.shots = []
+    self.lastShot = 0
+    self.shotCooldown = AlienFleet.SHOT_COOLDOWN
 
     for i in range(rows):
       tmpAliens = []
@@ -143,6 +151,22 @@ class AlienFleet:
     if (resize):
       self.resize()
 
+  def shot(self):
+    sprite = Sprite('assets/shot.png')
+
+    randomLine = random.randint(0, len(self.aliens) - 1)
+    randomColumn = random.randint(0, len(self.aliens[randomLine]) - 1)
+
+    alien = self.aliens[randomLine][randomColumn]
+
+    sprite.x = alien.x + alien.width / 2
+    sprite.y = alien.y + alien.height
+
+    self.shots.append(sprite)
+
+    self.shotCooldown = AlienFleet.SHOT_COOLDOWN + random.randint(-2, 2) / 10
+    self.lastShot = 0
+
   def tick(self):
     if (not len(self.aliens)):
       self.game.mainMenu.show()
@@ -150,6 +174,8 @@ class AlienFleet:
       return
 
     deltaTime = self.game.window.delta_time()
+
+    self.lastShot += deltaTime
 
     self.x += self.dx * deltaTime
     self.y += self.dy * deltaTime
@@ -161,6 +187,9 @@ class AlienFleet:
         self.aliens[i][j].draw()
 
     self.hitDetection()
+
+    if (self.lastShot >= self.shotCooldown):
+      self.shot()
     
     if (self.shouldDescend):
       self.descentDistance += self.dy * deltaTime
@@ -184,6 +213,13 @@ class AlienFleet:
     if (self.y + self.height >= self.game.player.sprite.y):
       self.game.setLife(self.game.life - 1)
       self.game.reset()
+
+    for index, shot in enumerate(self.shots):
+      shot.y += AlienFleet.SHOT_SPEED * deltaTime
+      shot.draw()
+      
+      if (shot.y >= self.game.WINDOW_HEIGHT):
+        self.shots.pop(index)
 
     # Debug fleet x, y, width, height
     if (self.game.DEBUG):

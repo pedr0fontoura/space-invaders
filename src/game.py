@@ -37,19 +37,22 @@ class Game:
     self.menuPool.append(self.mainMenu)
     self.menuPool.append(self.difficultyMenu)
 
-    self.lifeBar = Sprite(Game.LIFE_SPRITE_PATH, Game.LIFE_SPRITE_FRAMES)
-    self.lifeBar.set_sequence(0, 3, False)
-    self.lifeBar.set_total_duration(1)
-
-    self.lifeBar.x = Game.WINDOW_WIDTH - self.lifeBar.width - 5
-    self.lifeBar.y = 0
-
     self.life = Game.MAX_LIFE
 
     self.difficulty = 1
     self.score = 0
 
     self.inGame = False
+
+  def createLifeBar(self):
+    lifeBar = Sprite(Game.LIFE_SPRITE_PATH, Game.LIFE_SPRITE_FRAMES)
+    lifeBar.set_sequence(0, 3, False)
+    lifeBar.set_total_duration(1)
+
+    lifeBar.x = Game.WINDOW_WIDTH - lifeBar.width - 5
+    lifeBar.y = 0
+
+    return lifeBar
     
   def setLife(self, life):
     if (life > 3):
@@ -63,6 +66,7 @@ class Game:
     self.lifeBar.set_curr_frame(Game.MAX_LIFE - life)
 
   def start(self):
+    self.lifeBar = self.createLifeBar()
     self.life = Game.MAX_LIFE
     self.score = 0
     self.player = Player(self)
@@ -74,8 +78,7 @@ class Game:
     self.mainMenu.show()
   
   def reset(self):
-    self.player = Player(self)
-    self.aliens = AlienFleet(self, 0, 64, 3, 5)
+    self.player.sprite.x = self.window.width / 2 - self.player.sprite.width / 2
 
   def tick(self):
     if (Game.DEBUG):
