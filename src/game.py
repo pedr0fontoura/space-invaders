@@ -1,6 +1,6 @@
 from PPlay.window import *
 from PPlay.sprite import *
-from menus import MainMenu, DifficultyMenu
+from menu import MainMenu, DifficultyMenu
 from player import Player
 from aliens import AlienFleet
 
