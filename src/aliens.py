@@ -110,7 +110,7 @@ class AlienFleet:
 
     resize = False
 
-    # Detection
+    # Shot detection
     for k in range(len(self.game.player.shots)):
       shot = self.game.player.shots[k]
 
@@ -138,6 +138,32 @@ class AlienFleet:
 
         if (shouldBreak):
           break
+
+    # Special Shot detection
+    if (self.game.player.special):
+      specialShot = self.game.player.special
+
+      if ((specialShot.x >= self.x and specialShot.x <= self.x + self.width) and (specialShot.y <= self.y + self.height and specialShot.y >= self.y)):
+        for i in range(len(self.aliens) - 1, -1 , -1):
+          shouldBreak = False
+
+          for j in range(len(self.aliens[i])):
+            alien = self.aliens[i][j]
+
+            if (alien.collided(specialShot)):
+              _aliens.append([i, j])
+              resize = True
+
+              if (len(self.aliens[i]) == 1):
+                _rows.append(i)
+
+              self.game.score += len(self.aliens) - i
+
+              shouldBreak = True
+              break
+
+          if (shouldBreak):
+            break
 
     for _alien in _aliens:
       self.aliens[_alien[0]].pop(_alien[1])

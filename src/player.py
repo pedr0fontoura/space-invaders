@@ -4,8 +4,12 @@ class Player:
 
   SPRITE_PATH = 'assets/ship.png'
 
+  ATTACK_KEY = 'SPACE'
+
   SHOT_COOLDOWN = 0.5
   SHOT_SPEED = 400
+
+  SPECIAL_COOLDOWN = 5.0
 
   def __init__(self, game):
     self.game = game
@@ -18,9 +22,18 @@ class Player:
 
     self.speed = 300 * (1.0 - self.game.difficulty / 10)
 
+    self.wasAttackKeyPressed = False
+    self.attackKeyPressTime = 0
+
     self.shots = []
     self.lastShot = 0
     self.canShot = True
+
+    self.special = None
+    self.specialEffect = None
+
+    self.lastSpecial = 0
+    self.canUseSpecial = True
 
     self.invincibleTimer = 0
     self.invincible = False
@@ -31,6 +44,18 @@ class Player:
     sprite.y = self.sprite.y - sprite.height
 
     self.shots.append(sprite)
+
+  def specialShot(self):
+    sprite = Sprite('assets/shot.png')
+    sprite.x = self.sprite.x + self.sprite.width / 2
+    sprite.y = self.sprite.y - sprite.height
+
+    effect = Sprite('assets/specialeffect.png')
+    effect.x = sprite.x - 2
+    effect.y = sprite.y - 2
+
+    self.special = sprite
+    self.specialEffect = effect
   
   def hitDetection(self):
     if (self.invincible):
@@ -55,6 +80,13 @@ class Player:
     deltaTime = self.game.window.delta_time()
 
     self.lastShot += deltaTime
+    self.lastSpecial += deltaTime
+
+    if (self.lastShot >= Player.SHOT_COOLDOWN):
+      self.canShot = True
+
+    if (self.lastSpecial >= Player.SPECIAL_COOLDOWN):
+      self.canUseSpecial = True
 
     if (self.invincible):
       self.invincibleTimer += deltaTime
@@ -64,19 +96,32 @@ class Player:
         self.invincibleTimer = 0
         self.sprite.pause()
 
-    if (self.lastShot >= Player.SHOT_COOLDOWN):
-      self.canShot = True
-
     if (self.game.keyboard.key_pressed('A') and self.sprite.x >= 0):
       self.sprite.x -= self.speed * deltaTime
 
     if (self.game.keyboard.key_pressed('D') and self.sprite.x + self.sprite.width <= self.game.window.width):
       self.sprite.x += self.speed * deltaTime
 
-    if (self.canShot and self.game.keyboard.key_pressed('SPACE')):
+    if (not self.wasAttackKeyPressed and self.game.keyboard.key_pressed(Player.ATTACK_KEY)):
+      self.wasAttackKeyPressed = True
+      self.attackKeyPressTime = 0
+
+    if (self.wasAttackKeyPressed):
+      self.attackKeyPressTime += deltaTime
+
+    if (self.wasAttackKeyPressed and self.canShot and self.attackKeyPressTime <= 0.2 and not self.game.keyboard.key_pressed(Player.ATTACK_KEY)):
+      self.wasAttackKeyPressed = False
+      
       self.canShot = False
       self.lastShot = 0
       self.shot()
+
+    if (self.wasAttackKeyPressed and self.canUseSpecial and self.attackKeyPressTime >= 2 and not self.game.keyboard.key_pressed(Player.ATTACK_KEY)):
+      self.wasAttackKeyPressed = False
+      
+      self.canUseSpecial = False
+      self.lastSpecial = 0
+      self.specialShot()
 
     self.hitDetection()
 
@@ -86,6 +131,17 @@ class Player:
       
       if (shot.y <= 0):
         self.shots.pop(index)
+
+    if (self.special):
+      self.special.y -= Player.SHOT_SPEED * deltaTime
+      self.specialEffect.y -= Player.SHOT_SPEED * deltaTime
+      
+      self.special.draw()
+      self.specialEffect.draw()
+
+      if (self.special.y <= 0):
+        self.special = None
+        self.specialEffect = None
 
     self.sprite.draw()
     self.sprite.update()
